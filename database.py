@@ -1,7 +1,7 @@
 import sqlite3
 from config import DB_PATH
 
-con = sqlite3.connect(DB_PATH)
+con = sqlite3.connect(DB_PATH, check_same_thread=False)
 cur = con.cursor()
 
 
@@ -45,7 +45,6 @@ class DB:
     def check_user(username):
         username = str(username)
         cursor = con.execute(f"SELECT * FROM Users WHERE username='{username}'")
-        con.close()
         return len(cursor.fetchall()) > 0
 
 
