@@ -1,7 +1,7 @@
 import requests
 from transformers import AutoTokenizer
 from config import *
-
+from database import DB
 
 
 class GPT:
@@ -23,9 +23,9 @@ class GPT:
     def make_promt(self, user_id):
         json = {
             "messages": [
-                {"role": "system", "content": user_history['system_content']},
-                {"role": "user", "content": user_history['user_content']},
-                {"role": "assistant", "content": user_history['assistant_content']}
+                {"role": "system", "content": DB.get_column(user_id, 'current_subject')},
+                 {"role": "user", "content": DB.get_column(user_id, 'task')},
+                {"role": "assistant", "content": DB.get_column(user_id, 'level')}
             ],
             "temperature": 1.2,
             "max_tokens": self.MAX_TOKENS,

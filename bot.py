@@ -90,18 +90,17 @@ def get_promt(message):
 
 
     # Формируем промт и отправляем его
-    promt = gpt.make_promt(users_history[user_id])  # json
+    promt = gpt.make_promt(user_id)
     resp = gpt.send_request(promt)
 
     # Обрабатываем ответ
     answer = gpt.process_resp(resp)
 
-
     # Дописываем
     if answer[0]:
-        users_history[user_id]['assistant_content'] += answer[1]
+        DB.update_user(user_id, level=answer[1])
 
-    bot.send_message(user_id, text=users_history[user_id]['assistant_content'],
+    bot.send_message(user_id, text=answer[1],
                      reply_markup=create_keyboard(["Продолжить решение", "Завершить решение"]))
 
     logging.info(f"Пользователь {user_id} успешно получил ответ от GPT")
@@ -117,7 +116,7 @@ def end_filter(message):
 def end_task(message):
     user_id = message.from_user.id
     bot.send_message(user_id, "Текущие решение завершено")
-    users_history[user_id] = {}
+    DB.delete_user(user_id)
     solve_task(message)
 
 
